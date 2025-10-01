@@ -1,44 +1,43 @@
-// swift-tools-version:5.9
+// swift-tools-version: 5.9
 import PackageDescription
 
 let package = Package(
     name: "KTVHTTPCache",
     platforms: [
-        .iOS(.v12),
-        .tvOS(.v12),
-        .macOS(.v10_15)
+        .iOS(.11)
     ],
     products: [
         .library(name: "KTVHTTPCache", targets: ["KTVHTTPCache"])
     ],
     targets: [
-        // CocoaAsyncSocket (벤더)
-        .target(
-            name: "CocoaAsyncSocket",
-            path: "Vendors/CocoaAsyncSocket/Source",
-            publicHeadersPath: "."
-        ),
-
-        // KTVHTTPCache 본체
         .target(
             name: "KTVHTTPCache",
-            path: ".",                                // ← 패키지 루트 기준
-            publicHeadersPath: "KTVHTTPCache/Classes",// ← 공개 헤더 위치
-            exclude: [
-                "demo",
-                "documents",
-                "Framework",
-                "README.md",
-                "README_CN.md",
-                "KTVHTTPCache.podspec"
+            // 타겟 소스 디렉터리들만 명시
+            path: ".",
+            sources: [
+                "KTVHTTPCache/Classes",
+                "KTVCHTTPServer",
+                "Vendors/CocoaAsyncSocket",
+                "Vendors/CocoaHTTPServer/Core",
+                "Vendors/CocoaHTTPServer/Extensions"
             ],
+            // Classes 아래의 공개 헤더들을 그대로 공개
+            publicHeadersPath: "KTVHTTPCache/Classes",
             cSettings: [
-                // <KTVHTTPCache/...> 포함이 가능하도록 검색 루트를 루트로
-                .headerSearchPath("."),
+                // 헤더 탐색 경로
                 .headerSearchPath("KTVHTTPCache/Classes"),
-                .headerSearchPath("Vendors/CocoaAsyncSocket/Source")
+                .headerSearchPath("KTVCHTTPServer"),
+                .headerSearchPath("Vendors"),
+                .headerSearchPath("Vendors/CocoaAsyncSocket/Source/GCD"),
+                .headerSearchPath("Vendors/CocoaHTTPServer"),
+                .headerSearchPath("Vendors/CocoaHTTPServer/Core"),
+                .headerSearchPath("Vendors/CocoaHTTPServer/Extensions")
             ],
-            dependencies: ["CocoaAsyncSocket"]
+            linkerSettings: [
+                .linkedFramework("CFNetwork"),
+                .linkedFramework("Security"),
+                .linkedFramework("SystemConfiguration")
+            ]
         )
     ]
 )
