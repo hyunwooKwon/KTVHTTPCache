@@ -4,26 +4,41 @@ import PackageDescription
 let package = Package(
     name: "KTVHTTPCache",
     platforms: [
-        .iOS(.v11), .tvOS(.v11), .macOS(.v10_13)
+        .iOS(.v12),
+        .tvOS(.v12),
+        .macOS(.v10_15)
     ],
     products: [
         .library(name: "KTVHTTPCache", targets: ["KTVHTTPCache"])
     ],
     targets: [
+        // CocoaAsyncSocket (벤더)
+        .target(
+            name: "CocoaAsyncSocket",
+            path: "Vendors/CocoaAsyncSocket/Source",
+            publicHeadersPath: "."
+        ),
+
+        // KTVHTTPCache 본체
         .target(
             name: "KTVHTTPCache",
-            path: "",
-            // ⚠️ umbrella header가 있는 곳을 public 헤더 경로로
-            publicHeadersPath: "Framework",
-            // 실제 구현 소스가 있는 곳
-            sources: [
-                "KTVHTTPCache/Classes"
+            path: ".",                                // ← 패키지 루트 기준
+            publicHeadersPath: "KTVHTTPCache/Classes",// ← 공개 헤더 위치
+            exclude: [
+                "demo",
+                "documents",
+                "Framework",
+                "README.md",
+                "README_CN.md",
+                "KTVHTTPCache.podspec"
             ],
             cSettings: [
-                // 클래스/벤더 헤더 탐색 경로
+                // <KTVHTTPCache/...> 포함이 가능하도록 검색 루트를 루트로
+                .headerSearchPath("."),
                 .headerSearchPath("KTVHTTPCache/Classes"),
                 .headerSearchPath("Vendors/CocoaAsyncSocket/Source")
-            ]
+            ],
+            dependencies: ["CocoaAsyncSocket"]
         )
     ]
 )
