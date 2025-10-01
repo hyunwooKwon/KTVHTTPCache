@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "KTVHTTPCache",
     platforms: [
-        .iOS(.11)
+        .iOS(.v12)
     ],
     products: [
         .library(name: "KTVHTTPCache", targets: ["KTVHTTPCache"])
@@ -12,31 +12,31 @@ let package = Package(
     targets: [
         .target(
             name: "KTVHTTPCache",
-            // 타겟 소스 디렉터리들만 명시
             path: ".",
+            // ⬇️ 실제 들어있는 경로들만 포함
             sources: [
                 "KTVHTTPCache/Classes",
-                "KTVCHTTPServer",
-                "Vendors/CocoaAsyncSocket",
-                "Vendors/CocoaHTTPServer/Core",
-                "Vendors/CocoaHTTPServer/Extensions"
+                "KTVHTTPCache/CocoaHTTPServer",
+                "Vendors/CocoaAsyncSocket"
             ],
-            // Classes 아래의 공개 헤더들을 그대로 공개
-            publicHeadersPath: "KTVHTTPCache/Classes",
+            publicHeadersPath: "KTVHTTPCache",   // KTVHTTPCache.h 위치
+            exclude: [
+                "demo", "documents", "Framework",
+                "README.md", "README_CN.md", "KTVHTTPCache.podspec"
+            ],
             cSettings: [
-                // 헤더 탐색 경로
-                .headerSearchPath("KTVHTTPCache/Classes"),
-                .headerSearchPath("KTVCHTTPServer"),
-                .headerSearchPath("Vendors"),
-                .headerSearchPath("Vendors/CocoaAsyncSocket/Source/GCD"),
-                .headerSearchPath("Vendors/CocoaHTTPServer"),
-                .headerSearchPath("Vendors/CocoaHTTPServer/Core"),
-                .headerSearchPath("Vendors/CocoaHTTPServer/Extensions")
+                // KTV 헤더를 서로 찾게
+                .headerSearchPath("KTVHTTPCache"),
+                // CocoaHTTPServer 하위경로 전부
+                .headerSearchPath("KTVHTTPCache/CocoaHTTPServer"),
+                .headerSearchPath("KTVHTTPCache/CocoaHTTPServer/Categories"),
+                .headerSearchPath("KTVHTTPCache/CocoaHTTPServer/Mime"),
+                .headerSearchPath("KTVHTTPCache/CocoaHTTPServer/Responses"),
+                // GCDAsyncSocket 헤더
+                .headerSearchPath("Vendors/CocoaAsyncSocket")
             ],
-            linkerSettings: [
-                .linkedFramework("CFNetwork"),
-                .linkedFramework("Security"),
-                .linkedFramework("SystemConfiguration")
+            swiftSettings: [
+                .define("SWIFT_PACKAGE")
             ]
         )
     ]
