@@ -9,12 +9,12 @@
 #ifndef KTVHCHTTPHeader_h
 #define KTVHCHTTPHeader_h
 
-#import "HTTPServer.h"
-#import "HTTPConnection.h"
-#import "HTTPMessage.h"
-#import "HTTPResponse.h"
-#import "HTTPDataResponse.h"
-#import "HTTPErrorResponse.h"
+#import <CocoaHTTPServer/HTTPServer.h>
+#import <CocoaHTTPServer/HTTPConnection.h>
+#import <CocoaHTTPServer/HTTPMessage.h>
+#import <CocoaHTTPServer/HTTPResponse.h>
+#import <CocoaHTTPServer/HTTPDataResponse.h>
+#import <CocoaHTTPServer/HTTPErrorResponse.h>
 
 
 #endif /* KTVHCHTTPHeader_h */
