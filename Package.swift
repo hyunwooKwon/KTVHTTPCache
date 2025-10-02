@@ -10,26 +10,39 @@ let package = Package(
         .library(name: "KTVHTTPCache", targets: ["KTVHTTPCache"])
     ],
     targets: [
+        // 1) CocoaAsyncSocket 타깃
+        .target(
+            name: "CocoaAsyncSocket",
+            path: "KTVHTTPCache/Vendors/CocoaAsyncSocket",
+            publicHeadersPath: ".",
+            cSettings: [
+                .headerSearchPath(".")
+            ]
+        ),
+
+        // 2) CocoaHTTPServer 타깃 (AsyncSocket 의존)
+        .target(
+            name: "CocoaHTTPServer",
+            path: "KTVHTTPCache/CocoaHTTPServer",
+            publicHeadersPath: ".",
+            dependencies: ["CocoaAsyncSocket"],
+            cSettings: [
+                .headerSearchPath("."),
+                .headerSearchPath("Categories"),
+                .headerSearchPath("Mime"),
+                .headerSearchPath("Responses")
+            ]
+        ),
+
+        // 3) KTVHTTPCache 본체 타깃 (HTTPServer 의존)
         .target(
             name: "KTVHTTPCache",
-            // 👇 네 레포의 폴더 구조 그대로 맞춰서 사용
-            path: "KTVHTTPCache",
-            // 이 세 폴더 안의 .m 파일들을 전부 같은 타깃으로 컴파일
-            sources: [
-                "Classes",
-                "CocoaHTTPServer",
-                "Vendors/CocoaAsyncSocket"
-            ],
-            // 공개 헤더(umbrella 포함)가 있는 곳
-            publicHeadersPath: "Classes",
-            // Obj-C가 서로를 찾을 수 있도록 헤더 검색 경로 추가
+            path: "KTVHTTPCache/Classes",
+            publicHeadersPath: ".",
+            dependencies: ["CocoaHTTPServer"],
             cSettings: [
-                .headerSearchPath("Classes"),
-                .headerSearchPath("CocoaHTTPServer"),
-                .headerSearchPath("CocoaHTTPServer/Categories"),
-                .headerSearchPath("CocoaHTTPServer/Mime"),
-                .headerSearchPath("CocoaHTTPServer/Responses"),
-                .headerSearchPath("Vendors/CocoaAsyncSocket")
+                .headerSearchPath("."),                 // KTVHTTPCache/Classes
+                .define("OS_OBJECT_USE_OBJC", to: "1", .when(platforms: [.iOS, .tvOS, .macOS]))
             ]
         )
     ],
